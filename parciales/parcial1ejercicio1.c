@@ -97,11 +97,11 @@ int main (void) {
 
                     if (1000 <= nueva_clave && nueva_clave <= 9999) {
                         clave_usuario = nueva_clave;
-                        printf("Clave cambiada con exito!\n\n");
+                        printf("-> Clave cambiada con exito!\n\n");
                         seguir_intentando = 0;
 
                     } else {
-                        printf("Clave invalida...\n\n");
+                        printf("-> Clave invalida...\n\n");
                     }
                 }
             }
