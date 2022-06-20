@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <string.h>
 
 int multiplicar(int num1, int num2) {
     return num1 * num2;
@@ -10,37 +9,37 @@ void presentacion() {
 }
 
 void imprimir_mensaje(char mensaje[]) {
-    int max_chars_por_linea = 20;
-    int min_chars_por_linea = 4;
+    int max_chars_por_mensaje = 200;
+    int max_chars_por_linea = 40;
+
     int espaciado = 2;
     char character[] = "*";
-
-    int lineas = strlen(mensaje) / max_chars_por_linea;
-    int caracteres_restantes = strlen(mensaje);
 
     // Imprimir borde superior
     int tamano_horizontal_mensaje;
     int i;
 
-    for (i = 0; i <= caracteres_restantes + min_chars_por_linea || i <= max_chars_por_linea; i++) {
+    for (i = 0; i < max_chars_por_linea + espaciado; i++) {
         printf("%s", character);
     }
-
-    tamano_horizontal_mensaje = i;
+    
+    printf("\n");
 
     // Imprimir mensaje
+    
+    int j;
 
-    for (int j = 0; j < espaciado + tamano_mensaje; j++) {
+    for (j = 0; j < max_chars_por_linea; j++) {
         if (j == 0){
-            printf("*");
+            printf("%s ", character);
         }
 
-        else if (j < espaciado) {
-            printf(" ");
+        else if (j == max_chars_por_linea - 1) {
+        	printf(" %s", character);
         }
 
         else {
-            print();
+            printf(" ");
         }
     }
     
