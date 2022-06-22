@@ -5,6 +5,7 @@
 
 #define	MAX_NUM_LEN 8
 #define MAX_JUGADAS 10
+#define SLOTS 3
 
 enum tipos {
     DIGITO = 1,
@@ -98,7 +99,15 @@ double recibir_double(char mensaje_entrada[], char mensaje_error[]) {
     }
 }
 
-void realizar_jugada() {
+int dar_a_la_ruleta(int buffer[SLOTS]) {
+    
+}
+
+void darle_ruleta() {
+    system("cls");
+}
+
+void jugar() {
     system("cls");
     int jugadas = recibir_int(
                             "Por favor ingrese el número de jugadas que desea hacer. -> ", 
@@ -106,8 +115,12 @@ void realizar_jugada() {
                             1, 
                             MAX_JUGADAS
                         );
-
     
+    int index; 
+
+    for (index = 0; index < jugadas - 1; index++) {
+
+    }
 }
 
 int main(void) {
