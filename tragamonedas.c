@@ -2,9 +2,12 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <Windows.h>
 
 #define	MAX_NUM_LEN 8
 #define MAX_JUGADAS 10
+#define GIROS_A_LA_RULETA 8
+#define CANTIDAD_SIMBOLOS 7
 #define SLOTS 3
 
 enum tipos {
@@ -81,6 +84,11 @@ int recibir_int(char mensaje_entrada[], char mensaje_error[], int min, int max) 
     }
 }
 
+int random_num(int min, int max) {
+    srand(time(NULL)); 
+    return (rand() % (max - min + 1)) + min;
+}
+
 double recibir_double(char mensaje_entrada[], char mensaje_error[]) {
     char buffer[MAX_NUM_LEN];
     int es_valido = 0;
@@ -100,7 +108,21 @@ double recibir_double(char mensaje_entrada[], char mensaje_error[]) {
 }
 
 int dar_a_la_ruleta(int buffer[SLOTS]) {
-    
+    sleep(1);
+
+    int simbolos[CANTIDAD_SIMBOLOS] = {"😈", "🙃", "😙", "🤩", "👽", "👩‍❤️‍👩", "😷"};
+
+    int i;
+
+    for (i = 0; i < GIROS_A_LA_RULETA; i++) {
+
+        int primera_rueda = random_num(0, CANTIDAD_SIMBOLOS);
+        int segunda_rueda = random_num(0, CANTIDAD_SIMBOLOS);
+        int tercera_rueda = random_num(0, CANTIDAD_SIMBOLOS);
+
+        
+
+    }
 }
 
 void darle_ruleta() {
@@ -119,7 +141,7 @@ void jugar() {
     int index; 
 
     for (index = 0; index < jugadas - 1; index++) {
-
+        
     }
 }
 
