@@ -99,15 +99,6 @@ int recibir_input(char buffer[], int longitud) {
     return buffer_length;
 }
 
-void recibir_enter(char mensaje_entrada[]) {
-    int entrada;
-
-    do {
-        printf("%s", mensaje_entrada);
-        entrada = getchar();
-    } while(entrada != '\n' && entrada != EOF );
-}
-
 int recibir_int(char mensaje_entrada[], char mensaje_error[], int min, int max) {
     char buffer[MAX_NUM_LEN];
     int es_valido = 0;
@@ -155,105 +146,127 @@ void imprimir_ruletas(char primer[], char segundo[], char tercer[]) {
     printf("| %s | %s | %s |", primer, segundo, tercer);
 }
 
-int obtener_ruta_del_archivo(char ruta_del_archivo[100], int ano, int mes, int dia) {
-    /*
-        Retorna 0 si hubo un error al encontrar el archivo. 1 si se ha encontrado con exito.
-    */
-    char directorio[100];
+// void reescribir_linea(FILE *file, char path[], int linea, double valor_a_sumar) {
+//     int index = 0;
+//     double valor_a_actualizar;
+//     char buffer[MAX_CHAR_LEN];
+//     char primera_linea[MAX_CHAR_LEN];
+//     char segunda_linea[MAX_CHAR_LEN];
+//     char tercera_linea[MAX_CHAR_LEN];
 
-    char nombre_archivo[15];
+//     while (fgets(buffer, MAX_CHAR_LEN, file)) {
+//         printf("%s", buffer);
 
-    if (getcwd(directorio, sizeof(directorio)) == NULL) {
-        printf("\nError obteniendo directorio de trabajo.\n\n");
-        return 0;
-    }
+//         if (index == 0) strcat(primera_linea, buffer);
+//         if (index == 1) strcat(segunda_linea, buffer);
+//         if (index == 2) strcat(tercera_linea, buffer);
 
-    snprintf(nombre_archivo, 15, "%d_%d_%d.txt", ano, mes, dia);
-    snprintf(ruta_del_archivo, 100, "%s\\%s", directorio, nombre_archivo);
+
+//         if (linea == index) {
+//             char *endpointer;
+
+//             char numero_extraido[MAX_NUM_LEN];
+
+//             int idx;
+//             for (idx = 0; idx < strlen(buffer); idx++) {
+//                 if (isdigit(buffer[idx]) || buffer[idx] == '.') {
+//                     strcat(numero_extraido, &buffer[idx]);
+//                 }
+//             }
+
+//             valor_a_actualizar = atof(numero_extraido);
+//             valor_a_actualizar += valor_a_sumar;
+//         }
+
+//         index += 1;
+//     }
+
+//     fclose(file);
+
+//     file = fopen(path, "w");
+
+//     char valor_en_string[MAX_NUM_LEN];
+
+//     snprintf(valor_en_string, MAX_NUM_LEN, "%f", valor_a_actualizar);
+
+//     for (index = 0; index < LINEAS_ARCHIVO; index++) {
+//         char temp_string[40];
+//         char valor_en_string[MAX_NUM_LEN];
+
+//         if (index == linea) {
+//             strcpy(temp_string, archivos_lineas[index]);
+//             strcat(temp_string, valor_en_string);
+//             fprintf(file, "%s\n", temp_string);
+
+//         } else {
+//             if (index == 0) fprintf(file, "%s\n", primera_linea);
+//             if (index == 1) fprintf(file, "%s\n", segunda_linea);
+//             if (index == 2) fprintf(file, "%s\n", tercera_linea);
+//         }
+//     }
+// }
+
+void imprimir_jugada() {
+
 }
 
 void guardar(int jugadas, double dinero_ingresado, double dinero_retirado) {
-    FILE *archivo;
-    char path_del_archivo[100];
+    FILE *file;
+    char directorio[100];
+
+    if (getcwd(directorio, sizeof(directorio)) == NULL) {
+        printf("\nError obteniendo directorio de trabajo.\n");
+        return;
+    }
 
     time_t raw_time = time(0);
     struct tm hora_fecha = *localtime(&raw_time);
-    char time_de_la_jugada[20];
     
+    char nombre_archivo[15];
+    char nombre_y_path[100];
+    char time_de_la_jugada[20];
+
+    snprintf(nombre_archivo, 15, "%d_%02d_%02d.txt", hora_fecha.tm_year + 1900, hora_fecha.tm_mon + 1, hora_fecha.tm_mday);
+    snprintf(nombre_y_path, 100, "%s\\%s", directorio, nombre_archivo);
     snprintf(time_de_la_jugada, 20, "%d-%d-%d %d:%d", hora_fecha.tm_mday, hora_fecha.tm_mon + 1, hora_fecha.tm_year + 1900, hora_fecha.tm_hour, hora_fecha.tm_min);
 
-    int exito = obtener_ruta_del_archivo(path_del_archivo, hora_fecha.tm_year + 1900, hora_fecha.tm_mon + 1, hora_fecha.tm_mday);
+    file = fopen(nombre_y_path, "a");
 
-    if (exito == 0) {
-        return;
-    }
+    fprintf(file, "---------------------------------------------------------------\n");
+    fprintf(file, "| JUGADAS | DINERO INGRESADO | DINERO RETIRADO | HORA Y FECHA |\n");
+    fprintf(file, "|---------|------------------|-----------------|--------------|\n");
+    fprintf(file, "|  %d            %.2f                %.2f                %s       |\n", jugadas, dinero_ingresado, dinero_retirado, time_de_la_jugada);
+    fprintf(file, "|_________|__________________|_________________|______________|\n");
+    fprintf(file, "\n");
 
-    archivo = fopen(path_del_archivo, "a");
+    fclose(file);
 
-    fprintf(archivo, "---------------------------------------------------------------------------------------------\n");
-    fprintf(archivo, "|  JUGADAS   |      DINERO INGRESADO     |       DINERO RETIRADO     |      HORA Y FECHA     |\n");
-    fprintf(archivo, "|--------------------------------------------------------------------------------------------|\n");
-    fprintf(archivo, "|     %d                %.2f                       %.2f                  %s     |\n", jugadas, dinero_ingresado, dinero_retirado, time_de_la_jugada);
-    fprintf(archivo, "|____________________________________________________________________________________________|\n");
-    fprintf(archivo, "\n");
-
-    fclose(archivo);
-}
-
-void leer_jugadas() {
-    FILE *archivo;
-
-    int index, dia, mes, ano;
-    char ruta_del_archivo[100];
-
-    for (index = 0; index <= 2; index++) {
-        system("cls");
-        printf("De que fecha desea saber obtener la data?\n\n");
-
-        if (index == 0) dia = recibir_int("Dia -> ", "Por favor introduzca un dia valido (1 - 31)\n\n", 1, 31);
-        if (index == 1) mes = recibir_int("Mes -> ", "Por favor introduzca un mes valido (1 - 12)\n\n", 1, 12);
-        if (index == 2) ano = recibir_int("Ano -> ", "Por favor introduzca un ano valido (2022 - 2022)\n\n", 2022, 2022);
-
-        printf("\n");
-    }
+    // if (file == NULL) {
+    //     fclose(file);
+    //     file = fopen(nombre_y_path, "w");
     
-    int exito = obtener_ruta_del_archivo(ruta_del_archivo, ano, mes, dia);
+    //     int indice;
+    //     fprintf(file, "MAYBEEEEEE");
 
-    if (exito == 0) {
-        return;
-    }
+        // for (indice = 0; indice < LINEAS_ARCHIVO; indice++) {
+        //     fprintf(file, "%s\n 0", archivos_lineas[indice]);
+        //     fprintf(file, "%s\n 0", archivos_lineas[indice]);
+        //     fprintf(file, "%s\n 0", archivos_lineas[indice]);
+        // }
 
-    archivo = fopen(ruta_del_archivo, "r");
+    //     fclose(file);
+    // }
 
-    // Checkeamos si el archivo existe
-    if (archivo == NULL) {
-        printf("\n\nError! El registro no existe.\n");
+    // Guardar y reescribir datos.
+    // reescribir_linea(file, nombre_y_path, 0, jugadas);
+    // reescribir_linea(file, nombre_y_path, 1, dinero_ingresado);
+    // reescribir_linea(file, nombre_y_path, 2, dinero_retirado);
 
-        recibir_enter("\nPresione ENTER para continuar... ");
-        return;
-    }
-
-	char tmp[1024];
-
-
-    // Leer contenido del archivo.
-    while(fgets(tmp, 1024, archivo) != NULL) {
-		while(tmp[strlen(tmp) - 1] == '\n' || tmp[strlen(tmp) - 1] == '\r' ) {
-			tmp[strlen(tmp) - 1] = '\0';
-		}
-		
-		printf("%s\n", tmp);
-	}
-
-    fclose(archivo);
-    recibir_enter("\nPresione ENTER para continuar...");
+    Sleep(2000);
 }
 
 int realizar_jugada(double *dinero, double *dinero_que_entra, double *dinero_que_sale) {
     system("cls");
-
-    double dinero_apostado = *dinero / 2;
-    *dinero -= dinero_apostado;
 
     int primera_rueda;
     int segunda_rueda;
@@ -289,8 +302,8 @@ int realizar_jugada(double *dinero, double *dinero_que_entra, double *dinero_que
     // Ganar triple.
         printf("Ganastes el triple!");
 
-        *dinero += dinero_apostado * 3;
-        *dinero_que_sale += dinero_apostado * 3;
+        *dinero = *dinero * 3;
+        *dinero_que_sale += *dinero * 3;
 
     } else if (
         simbolos[primera_rueda] == simbolos[segunda_rueda] || 
@@ -299,14 +312,15 @@ int realizar_jugada(double *dinero, double *dinero_que_entra, double *dinero_que
     ) {
     // Ganar doble. 
         printf("Ganastes el doble!");
+        *dinero = *dinero * 2;
 
-        *dinero += dinero_apostado * 2;
-        *dinero_que_sale += dinero_apostado * 2;
+        *dinero_que_sale += *dinero * 2;
 
     } else {
     // Perder.
         printf("Perdistes :(");
-        *dinero_que_entra += dinero_apostado;
+        *dinero = *dinero / 2;
+        *dinero_que_entra += *dinero / 2;
     }
 
     printf("\n\n");
@@ -334,29 +348,33 @@ void jugar() {
 
     int jugadas_realizadas; 
 
-    for (jugadas_realizadas = 0; jugadas_realizadas < jugadas;) {
+    for (jugadas_realizadas = 0; jugadas_realizadas < jugadas; jugadas_realizadas++) {
         int opcion_elegida;
 
         realizar_jugada(&dinero, &dinero_que_entra, &dinero_que_sale);
-        jugadas_realizadas++;
 
         printf("Dinero actual -> %.2f\n\n", dinero);
         
-        if (jugadas_realizadas == jugadas){
+        if (jugadas_realizadas == jugadas - 1){
             Sleep(2000);
 
             system("cls");
             if (dinero > dinero_inicial) printf("Has ganado %.2f!\n", dinero - dinero_inicial);
             else if (dinero_inicial == dinero) printf("Quedastes igual...");
-            else printf("Perdistes un total de %.2f :(\n", dinero_inicial - dinero);
+            else printf("Perdistes un total de %f :(\n", dinero_inicial - dinero);
 
-            recibir_enter("\n\nPresione ENTER para continuar...");
+            Sleep(3000);
 
         } else {
             printf("1- Continuar.\n");
             printf("2- Retirarse.\n\n");
 
-            opcion_elegida = recibir_int("Que desea hacer? -> ", "Entrada invalida. Por favor ingrese una opcion valida. \n\n", 1, 2);
+            opcion_elegida = recibir_int(
+                            "Que desea hacer? -> ", 
+                            "Entrada invalida. Por favor ingrese una opcion valida. \n\n", 
+                            1,
+                            2
+                        );
                             
             if (opcion_elegida == 2) {
                 break;
@@ -382,7 +400,7 @@ int main(void) {
             int opcion_elegida;
 
             system("cls");
-            printf("✧✧ TRAGAMONEDAS EL CHIGUIRE ✧✧\n\n");
+            printf("✧✧ MENU ✧✧\n\n");
 
             printf("1- ¡Jugar!\n");
             printf("2- Leer registros de jugadas.\n");
@@ -396,7 +414,6 @@ int main(void) {
                     break;
 
                 case 2:
-                    leer_jugadas();
                     continue;
 
                 case 3:
