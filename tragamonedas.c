@@ -125,7 +125,12 @@ int recibir_int(char mensaje_entrada[], char mensaje_error[], int min, int max) 
             }
         }
 
+        system("cls");
+
         printf("%s", mensaje_error);
+        recibir_enter("\nPresione Enter para continuar... ");
+
+        system("cls");
     }
 }
 
@@ -143,7 +148,12 @@ double recibir_double(char mensaje_entrada[], char mensaje_error[]) {
             return strtod(buffer, &endptr);
         }
 
+        system("cls");
+
         printf("%s", mensaje_error);
+        recibir_enter("\nPresione Enter para continuar");
+
+        system("cls");   
     }
 }
 
@@ -152,7 +162,10 @@ int random_num(int min, int max) {
 }
 
 void imprimir_ruletas(char primer[], char segundo[], char tercer[]) {
-    printf("| %s | %s | %s |", primer, segundo, tercer);
+    printf("\n");
+    printf("                -------------\n");
+    printf("                | %s | %s | %s |\n", primer, segundo, tercer);
+    printf("                -------------\n");
 }
 
 int obtener_ruta_del_archivo(char ruta_del_archivo[100], int ano, int mes, int dia) {
@@ -192,9 +205,9 @@ void guardar(int jugadas, double dinero_ingresado, double dinero_retirado) {
 
     fprintf(archivo, "---------------------------------------------------------------------------------------------\n");
     fprintf(archivo, "|  JUGADAS   |      DINERO INGRESADO     |       DINERO RETIRADO     |      HORA Y FECHA     |\n");
-    fprintf(archivo, "|--------------------------------------------------------------------------------------------|\n");
-    fprintf(archivo, "|     %d                %.2f                       %.2f                  %s     |\n", jugadas, dinero_ingresado, dinero_retirado, time_de_la_jugada);
-    fprintf(archivo, "|____________________________________________________________________________________________|\n");
+    fprintf(archivo, "----------------------------------------------------------------------------------------------\n");
+    fprintf(archivo, "    %d                %.2f                       %.2f                  %s     \n", jugadas, dinero_ingresado, dinero_retirado, time_de_la_jugada);
+    fprintf(archivo, "______________________________________________________________________________________________\n");
     fprintf(archivo, "\n");
 
     fclose(archivo);
@@ -208,11 +221,10 @@ void leer_jugadas() {
 
     for (index = 0; index <= 2; index++) {
         system("cls");
-        printf("De que fecha desea saber obtener la data?\n\n");
 
-        if (index == 0) dia = recibir_int("Dia -> ", "Por favor introduzca un dia valido (1 - 31)\n\n", 1, 31);
-        if (index == 1) mes = recibir_int("Mes -> ", "Por favor introduzca un mes valido (1 - 12)\n\n", 1, 12);
-        if (index == 2) ano = recibir_int("Ano -> ", "Por favor introduzca un ano valido (2022 - 2022)\n\n", 2022, 2022);
+        if (index == 0) dia = recibir_int("De que fecha desea saber obtener la data?\n\nDia -> ", "Por favor introduzca un dia valido (1 - 31)\n", 1, 31);
+        if (index == 1) mes = recibir_int("De que fecha desea saber obtener la data?\n\nMes -> ", "Por favor introduzca un mes valido (1 - 12)\n", 1, 12);
+        if (index == 2) ano = recibir_int("De que fecha desea saber obtener la data?\n\nAno -> ", "Por favor introduzca un ano valido (2022 - 2022)\n", 2022, 2022);
 
         printf("\n");
     }
@@ -227,7 +239,8 @@ void leer_jugadas() {
 
     // Checkeamos si el archivo existe
     if (archivo == NULL) {
-        printf("\n\nError! El registro no existe.\n");
+        system("cls");
+        printf("\nError! El registro no existe.\n");
 
         recibir_enter("\nPresione ENTER para continuar... ");
         return;
@@ -308,8 +321,15 @@ int realizar_jugada(double *dinero, double *dinero_que_entra, double *dinero_que
         printf("Perdistes :(");
         *dinero_que_entra += dinero_apostado;
     }
+}
 
-    printf("\n\n");
+void imprimir_resultados(double dinero, double dinero_inicial) {
+    system("cls");
+    if (dinero > dinero_inicial) printf("Has ganado %.2f!\n", dinero - dinero_inicial);
+    else if (dinero_inicial == dinero) printf("Quedastes igual...");
+    else printf("Perdistes un total de %.2f :(\n", dinero_inicial - dinero);
+
+    recibir_enter("\n\nPresione ENTER para continuar...");
 }
 
 void jugar() {
@@ -340,25 +360,18 @@ void jugar() {
         realizar_jugada(&dinero, &dinero_que_entra, &dinero_que_sale);
         jugadas_realizadas++;
 
-        printf("Dinero actual -> %.2f\n\n", dinero);
+        printf("             Dinero actual -> %.2f\n\n", dinero);
         
         if (jugadas_realizadas == jugadas){
-            Sleep(2000);
-
-            system("cls");
-            if (dinero > dinero_inicial) printf("Has ganado %.2f!\n", dinero - dinero_inicial);
-            else if (dinero_inicial == dinero) printf("Quedastes igual...");
-            else printf("Perdistes un total de %.2f :(\n", dinero_inicial - dinero);
-
-            recibir_enter("\n\nPresione ENTER para continuar...");
+            imprimir_resultados(dinero, dinero_inicial);
 
         } else {
-            printf("1- Continuar.\n");
-            printf("2- Retirarse.\n\n");
-
-            opcion_elegida = recibir_int("Que desea hacer? -> ", "Entrada invalida. Por favor ingrese una opcion valida. \n\n", 1, 2);
+            printf("Jugadas restantes -> %d\n\n", jugadas - jugadas_realizadas);
+            opcion_elegida = recibir_int("1- Continuar.\n2- Retirarse.\n\nQue desea hacer? -> ", "Entrada invalida. Por favor ingrese una opcion valida. \n\n", 1, 2);
                             
             if (opcion_elegida == 2) {
+                imprimir_resultados(dinero, dinero_inicial);
+
                 break;
             }
         }
@@ -372,8 +385,6 @@ int main(void) {
     int seguir_jugando = 1;
     int numero_de_caras = 6;
 
-    printf("¡Bienvenido/a Al Tragamonedas!\n\n");
-
     // Loop principal.
     while(seguir_jugando == 1) {
         int en_el_menu = 1;
@@ -382,13 +393,8 @@ int main(void) {
             int opcion_elegida;
 
             system("cls");
-            printf("✧✧ TRAGAMONEDAS EL CHIGUIRE ✧✧\n\n");
 
-            printf("1- ¡Jugar!\n");
-            printf("2- Leer registros de jugadas.\n");
-            printf("3- Salir.\n\n");
-
-            opcion_elegida = recibir_int("Eliga una opcion -> ", "\nOpcion incorrecta, por favor eliga de nuevo.\n", 1, 3);
+            opcion_elegida = recibir_int("+++ TRAGAMONEDAS EL CHIGUIRE +++\n\n1- Jugar!\n2- Leer registros de jugadas.\n3- Salir.\n\nEliga una opcion -> ", "\nOpcion incorrecta, por favor eliga de nuevo.\n", 1, 3);
 
             switch (opcion_elegida) {
                 case 1:
@@ -401,7 +407,7 @@ int main(void) {
 
                 case 3:
                     system("cls");
-                    printf("\n Que tenga buen dia!\n\n");
+                    printf("\n Que tenga un buen dia!\n\n");
                     en_el_menu = 0;
                     seguir_jugando = 0;
 
