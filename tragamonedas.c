@@ -23,9 +23,6 @@ enum tipos {
     ALFA = 5,
 };
 
-char archivos_lineas[LINEAS_ARCHIVO][40] = {"TOTAL DE JUGADAS: ", "TOTAL DE DINERO INGRESADO: ", "TOTAL DE DINERO RETIRADO: "};
-
-
 int validar(char buffer[], int limite, enum tipos tipo) {
     int buffer_length = strlen(buffer);
 
@@ -203,10 +200,10 @@ void guardar(int jugadas, double dinero_ingresado, double dinero_retirado) {
 
     archivo = fopen(path_del_archivo, "a");
 
-    fprintf(archivo, "---------------------------------------------------------------------------------------------\n");
+    fprintf(archivo, "----------------------------------------------------------------------------------------------\n");
     fprintf(archivo, "|  JUGADAS   |      DINERO INGRESADO     |       DINERO RETIRADO     |      HORA Y FECHA     |\n");
     fprintf(archivo, "----------------------------------------------------------------------------------------------\n");
-    fprintf(archivo, "    %d                %.2f                       %.2f                  %s     \n", jugadas, dinero_ingresado, dinero_retirado, time_de_la_jugada);
+    fprintf(archivo, "      %d                 %.2f                        %.2f               %s    \n", jugadas, dinero_ingresado, dinero_retirado, time_de_la_jugada);
     fprintf(archivo, "______________________________________________________________________________________________\n");
     fprintf(archivo, "\n");
 
